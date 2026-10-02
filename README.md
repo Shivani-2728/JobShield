@@ -116,3 +116,13 @@ User Input
             │
             ▼
        Downloadable Report
+## 📸 Application Screenshots
+
+### JobShield Application
+
+![JobShield Home](screenshots/jobshield-home.png)
+
+### High-Risk Scam Detection Result
+
+![JobShield High-Risk Result](screenshots/jobshield-high-risk.png)
+
