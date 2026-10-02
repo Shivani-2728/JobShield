@@ -1429,32 +1429,61 @@ def company_name_match(
     company_name,
     company_website
 ):
+    """
+    Return MATCH only when the normalized company identifier
+    matches the primary domain label.
+
+    Example:
+      Amazon + amazon.jobs -> MATCH
+      Example Technologies + example.com -> NEEDS VERIFICATION
+    """
 
     if (
         not company_name
         or not company_website
     ):
-
         return "NEEDS VERIFICATION"
 
-    company_words = word_tokens(
-        company_name
+    company = normalize_text(company_name)
+
+    # Remove common legal/business suffixes.
+    company = re.sub(
+        r"\b(inc|incorporated|corp|corporation|llc|ltd|limited|plc|company|co)\b",
+        " ",
+        company,
     )
 
-    domain_words = word_tokens(
-        clean_domain(
-            company_website
-        ).replace(
-            ".",
-            " "
-        )
+    company = re.sub(r"\s+", " ", company).strip()
+
+    company_identifier = re.sub(
+        r"[^a-z0-9]",
+        "",
+        company
     )
 
-    if company_words & domain_words:
+    domain = clean_domain(company_website)
 
+    if not domain:
+        return "NEEDS VERIFICATION"
+
+    # Use the primary domain label only.
+    primary_domain_label = domain.split(".")[0]
+
+    primary_domain_label = re.sub(
+        r"[^a-z0-9]",
+        "",
+        primary_domain_label
+    )
+
+    if (
+        company_identifier
+        and primary_domain_label
+        and company_identifier == primary_domain_label
+    ):
         return "MATCH"
 
     return "NEEDS VERIFICATION"
+
 
 def domains_match(
     email,
@@ -2549,6 +2578,11 @@ if submitted:
     emails_found = extract_emails(
         combined_text
     )
+
+    # If the recruiter email field is empty, automatically use
+    # the first email extracted from the job text/OCR.
+    if not recruiter_email.strip() and emails_found:
+        recruiter_email = emails_found[0]
 
     phones_found = extract_phones(
         combined_text
