@@ -1,0 +1,26 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment / secrets
+.env
+.env.*
+.streamlit/secrets.toml
+
+# Local databases / data
+*.db
+*.sqlite
+*.sqlite3
+uploads/
+reports/
+
+# Backups / temporary files
+*.backup*
+*.bak
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
